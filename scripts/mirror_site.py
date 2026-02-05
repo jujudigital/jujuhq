@@ -8,6 +8,16 @@ import requests
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://jujuhq.com"
+ALLOWED_HOSTS = {
+    "jujuhq.com",
+    "www.jujuhq.com",
+    "fonts.googleapis.com",
+    "fonts.gstatic.com",
+    "s.w.org",
+    "www.google.com",
+    "www.google-analytics.com",
+    "css3-mediaqueries-js.googlecode.com",
+}
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = ROOT / "index.html"
 BROKEN_LOG = ROOT / "BROKEN_ASSETS.md"
@@ -33,7 +43,8 @@ def is_same_origin(url: str) -> bool:
         u = urllib.parse.urlparse(url)
         if not u.netloc:
             return True  # relative
-        return u.netloc == urllib.parse.urlparse(BASE_URL).netloc
+        host = u.netloc.split(":")[0]
+        return host in ALLOWED_HOSTS
     except Exception:
         return False
 
@@ -101,12 +112,25 @@ def process_css_file(path: Path):
         if raw.startswith("data:"):
             continue
         urls.append(raw)
+    # Map original -> local relative for rewrite
+    rewrite_map: dict[str, str] = {}
     for u in urls:
         abs_u = absolutize(u)
-        # Only mirror same-origin assets
+        # Only mirror allowed-origin assets
         if is_same_origin(abs_u):
             downloaded, ctype = download(abs_u)
-            # No rewrite inside CSS for now, paths likely relative; keeping external references if any
+            if downloaded:
+                rel = os.path.relpath(downloaded, ROOT)
+                rewrite_map[u] = rel
+    if rewrite_map:
+        new_text = text
+        for orig, rel in rewrite_map.items():
+            # Replace simple occurrences of the URL within url(..) and general text
+            new_text = new_text.replace(orig, rel)
+        try:
+            path.write_text(new_text, encoding="utf-8", errors="ignore")
+        except Exception:
+            pass
 
 
 
@@ -116,7 +140,7 @@ def extract_asset_urls(soup: BeautifulSoup) -> list[tuple[str, str, str]]:
     for link in soup.find_all("link"):
         href = (link.get("href") or "").strip()
         rel = (link.get("rel") or [])
-        if href and any(r in {"stylesheet", "icon", "preload"} for r in rel):
+        if href and any(r in {"stylesheet", "icon", "preload", "apple-touch-icon"} for r in rel):
             assets.append(("link", "href", href))
     for script in soup.find_all("script"):
         src = (script.get("src") or "").strip()
@@ -146,6 +170,24 @@ def extract_asset_urls(soup: BeautifulSoup) -> list[tuple[str, str, str]]:
             if c:
                 assets.append(("meta", "content", c))
     return assets
+
+
+def extract_inline_style_urls(soup: BeautifulSoup) -> list[str]:
+    urls: list[str] = []
+    for el in soup.find_all(True):
+        style = (el.get("style") or "")
+        for m in CSS_URL_RE.finditer(style):
+            raw = m.group(1).strip("'\" ")
+            if raw and not raw.startswith("data:"):
+                urls.append(raw)
+    # Deduplicate
+    dedup = []
+    seen = set()
+    for u in urls:
+        if u not in seen:
+            seen.add(u)
+            dedup.append(u)
+    return dedup
 
 
 def extract_internal_links(soup: BeautifulSoup) -> list[str]:
@@ -189,13 +231,21 @@ def save_page(url: str, html: str) -> Path:
 
 
 def main():
-    if not INDEX_PATH.exists():
-        print(f"Missing {INDEX_PATH}")
+    # Prefer remote source backup for accurate original markup
+    source = ROOT / "index.remote.html"
+    if not source.exists():
+        source = INDEX_PATH
+    if not source.exists():
+        print(f"Missing {source}")
         sys.exit(1)
-    html = INDEX_PATH.read_text(encoding="utf-8", errors="ignore")
+    html = source.read_text(encoding="utf-8", errors="ignore")
     soup = BeautifulSoup(html, "lxml")
 
     assets = extract_asset_urls(soup)
+    # Add inline style URLs (e.g., background-image)
+    inline_urls = extract_inline_style_urls(soup)
+    for u in inline_urls:
+        assets.append(("inline-style", "style-url", u))
 
     # Download same-origin assets and optionally verify external ones
     rewrite_map: dict[str, str] = {}
@@ -227,13 +277,24 @@ def main():
         if not local_rel:
             continue
         # Find all matching tags again to replace
-        for el in soup.find_all(tag):
-            if (el.get(attr) or "").strip() == url:
-                el[attr] = local_rel
+        if tag == "inline-style":
+            # Rewrite occurrences in style attributes
+            for el in soup.find_all(True):
+                style = el.get("style")
+                if not style:
+                    continue
+                style_new = style.replace(url, local_rel)
+                if style_new != style:
+                    el["style"] = style_new
+        else:
+            for el in soup.find_all(tag):
+                if (el.get(attr) or "").strip() == url:
+                    el[attr] = local_rel
 
     # Save a backup of original and write rewritten
     backup = ROOT / "index.remote.html"
-    backup.write_text(html, encoding="utf-8", errors="ignore")
+    if not backup.exists():
+        backup.write_text(html, encoding="utf-8", errors="ignore")
     INDEX_PATH.write_text(str(soup), encoding="utf-8", errors="ignore")
 
     print("Mirroring complete. Assets downloaded and paths rewritten where possible.")

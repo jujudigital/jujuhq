@@ -1,0 +1,233 @@
+/**
+* Main theme override CSS
+*
+*/
+
+/* Typography
+*************/
+article h2 {
+  font-size: 2.0em;
+}
+article h2.hp-h2 {
+  font-size: 2.5em;
+}
+
+@media only screen and (max-width: 540px){
+  .bpd .cck {
+     width: 340px !important;
+  }
+}
+
+/* Home page about section tab hover color
+******************************************/
+li.jdl-hp-tab:hover  {
+    background: #455a64 !important;
+}
+
+/* First tab text color
+***********************/
+li.jdl-hp-tab > span.tve_scTC1{
+ color: #ffffff;
+}
+
+
+/* Textual hyperlinks
+*********************/
+.cnt .darkSec a {
+  color: #3d5afe;
+}
+.cnt .darkSec a:hover {
+  color: #607d8b;
+}
+
+p.hp-li-link {
+  font-size: 0.75em;
+  padding-left: 19%;
+}
+
+
+/* Contact form customisation
+******************************/
+
+.tve_flt .tve_red.tve_cb.tve_cb4 {
+  /* remove border from bounding content box*/
+  border: none !important;
+}
+
+.wpcf7-form {
+    background: rgba(189, 189, 189, 0.5);
+    padding:10px 30px;
+    /*border:2px solid #364851; */
+    margin-bottom:10px;
+    border-radius:7px;
+    color: #bbb;
+    /*width:100%;*/
+}
+
+.wpcf7-form input,
+.wpcf7-form select {
+    background:#f6f6f6;
+    padding:10px;
+    border:1px solid #364851;
+    margin:0px;
+    border-radius:7px;
+    font-family: Raleway;sans-serif;
+    font-weight: 300;
+    font-size:16px;
+    width:96%;
+}
+.wpcf7-form select {
+   color:#434343;
+   width: 100%;
+}
+
+.wpcf7-form textarea {
+    background:#fafafa;
+    border:1px solid #364851;
+    border-radius:7px;
+    width:96%;
+    margin:0px;
+    padding:10px;
+    color:#434343;
+    font-family: Raleway,sans-serif;
+    font-weight: 300;
+    font-size:16px;
+    vertical-align:middle;
+}
+.wpcf7-form p {
+    color:#666;
+    margin-top:20px;
+    margin-bottom:20px;
+}
+.wpcf7-form .wpcf7-submit {
+    text-align:center;
+    background:#303AA6;
+    border-radius:7px;
+    font-size:1.2em;
+    text-transform:uppercase;
+    cursor:pointer;
+    width:92%;
+    margin:0 0 0 20px;
+    padding:10px;
+    color:#fff;
+}
+
+.wpcf7-form input[type="submit"]:hover {
+align:center;
+width:92%;
+background: #2E3CFD;
+color: #ffffff !important;
+}
+
+div.wpcf7-mail-sent-ok {
+   border: 2px solid #4E6A78;
+   background-color: #bbb;
+}
+
+
+/* ReCaptcha & form rescaling for small width devices
+********************************************************/
+@media only screen and (max-width: 774px) and (min-width: 540px){
+
+  .wpcf7-form {
+    padding: 5px 10px 5px 17px;
+  }
+   .wpcf7-form input,
+   .wpcf7-form textarea {
+     width: 90%;
+  }
+
+  .wpcf7-form select {
+     width: 96%;
+  }
+
+  .wpcf7-form .wpcf7-submit {
+     margin: 0 0 0 7px;
+  }
+}
+
+@media only screen and (max-width: 540px) {
+ * {
+    box-sizing: border-box;
+  }
+  .wpcf7-form {
+    padding: 10px;
+  }
+
+   .wpcf7-form input,
+   .wpcf7-form select,
+   .wpcf7-form textarea {
+     width: 98%;
+  }
+
+  .form-container-recaptcha {
+    max-width: 270px;
+  }
+
+  .g-recaptcha {
+    transform-origin: left top;
+    -webkit-transform-origin: left top;
+    -ms-transform: scale(0.888); /* IE 9 */
+    -webkit-transform: scale(0.888); /* Safari */
+    transform: scale(0.888);
+  }
+
+  .wpcf7-form .wpcf7-submit {
+    margin: 0 0 0 8px;
+  }
+} /* end media max width 540px */
+
+/*Header font spacing adjustment
+**************************************/
+header nav ul li {
+    color: #455a64;
+    display: inline-block;
+    font-size: 1.143em;
+    float: none;
+    letter-spacing: 0em;
+    padding: 0px 18px;
+    position: relative;
+}
+
+/*Footer font spacing adjustment
+*************************************/
+footer .fmn .copy {
+    color: #757575;
+    font-size: 0.786em;
+    letter-spacing: 0em;
+    text-align: center;
+}
+
+/* Footer link hover
+**********************/
+footer .fmn .copy a:hover {
+    color: #3f51b5;
+}
+
+/* 404 page background
+*****************************/
+.error404   {
+ background-image: url('assets/img/404.jpg');
+background-position-x: 27%;
+background-position-y: 10%;
+}
+
+.error404 .scn.aut {
+  border-bottom: none;
+  position: relative;
+  float: right;
+  width: 75%;
+}
+
+.error404 .err {
+ min-height: 960px;
+}
+
+.error404 .ftw {
+ padding: 0;
+}
+
+.error404 .scn.aut h1,
+.error404 .scn.aut h2 {
+  color: #fff;
+}
