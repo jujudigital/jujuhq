@@ -1,0 +1,52 @@
+/* Minimal local CSS to replicate key Thrive/WP layout without hot-linking */
+
+/* Reset + base */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: "PT Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif; color: #424242; background: #ffffff; }
+
+/* Header */
+header { width: 100%; }
+#head_wrp { max-width: 1140px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; }
+#logo img { max-width: 400px; height: auto; display: block; }
+nav.right ul.menu { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; }
+nav.right ul.menu li a { color: #455a64; text-decoration: none; }
+nav.right ul.menu li a:hover { color: #90a4ae; }
+
+/* Content wrapper */
+.wrp.cnt { max-width: 1140px; margin: 0 auto; padding: 20px; }
+
+/* Hero / page sections */
+.thrv_page_section .in { padding: 20px; }
+.hp-h2 { font-family: "Raleway", Arial, sans-serif; font-size: 36px; color: #424242; }
+
+/* Columns */
+.thrv_columns { display: flex; gap: 20px; align-items: stretch; }
+.tve_colm { flex: 1 1 0; }
+.thrv_contentbox_shortcode .tve_cb { background: #f4f4f4; padding: 20px; border-radius: 4px; height: 100%; }
+.aligncenter { text-align: center; }
+
+/* Icon sizing (FA) */
+.thrv_icon i { line-height: 1; }
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 { font-family: "Raleway", Arial, sans-serif; color: #757575; margin: 0 0 10px 0; }
+p { line-height: 1.7em; font-size: 17px; margin: 0 0 10px 0; }
+
+/* Buttons */
+.tve_btn { display: inline-block; border: 0; border-radius: 4px; cursor: pointer; }
+.tve_btn .tve_btnLink { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+.tve_btn.tve_red { background: linear-gradient(#3d5afe, #3f51b5); }
+.tve_btn.tve_white { background: linear-gradient(#efefef, #bdbdbd); color: #333; }
+.tve_btn.tve_bigBtn .tve_btnLink { padding: 18px 24px; }
+.tve_btn .tve_btn_txt { font-weight: 600; }
+.tve_btn .tve_btn_divider { width: 1px; height: 20px; background: rgba(255,255,255,0.6); display: inline-block; }
+
+/* Utility */
+.tve_p_center { text-align: center; }
+.tve_p_left { text-align: left; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .thrv_columns { flex-direction: column; }
+}
